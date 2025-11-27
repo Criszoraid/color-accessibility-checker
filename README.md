@@ -1,73 +1,137 @@
-# React + TypeScript + Vite
+# 🎨 Color Accessibility Checker - GPT App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Aplicación de verificación de accesibilidad de colores integrada con ChatGPT.**
 
-Currently, two official plugins are available:
+Este proyecto demuestra cómo crear una aplicación web interactiva que permite analizar el contraste de colores y extraer paletas de sitios web, diseñada para funcionar tanto como aplicación independiente como widget dentro de ChatGPT.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Color App Preview](https://raw.githubusercontent.com/placeholder/preview.png)
 
-## React Compiler
+## 📋 Tabla de Contenidos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [Características](#-características)
+- [¿Cómo Funciona?](#-cómo-funciona)
+- [Requisitos](#-requisitos)
+- [Instalación Local](#-instalación-local)
+- [Desarrollo Local](#-desarrollo-local)
+- [Despliegue](#-despliegue)
+- [Integración con ChatGPT](#-integración-con-chatgpt)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Comandos Disponibles](#-comandos-disponibles)
+- [Licencia](#-licencia)
 
-## Expanding the ESLint configuration
+## ✨ Características
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **✅ Verificación WCAG**: Comprobación automática de estándares AA y AAA para texto normal y grande.
+- **🔍 Extracción por URL**: Analiza cualquier sitio web (ej. `google.com`) para extraer sus colores de marca automáticamente.
+- **🎨 Análisis de Paleta**: Genera una paleta completa de colores desde la URL proporcionada.
+- **🤖 Combinaciones Inteligentes**: Calcula y muestra automáticamente todas las combinaciones de colores accesibles de la paleta extraída.
+- **🌗 Diseño Premium**: Interfaz moderna con modo oscuro, glassmorphism y animaciones fluidas.
+- **📱 Responsive**: Funciona perfectamente en escritorio y móvil.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠 ¿Cómo Funciona?
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+El widget utiliza React y Vite para el frontend. Para la extracción de colores, se integra con la API de **Microlink**, lo que permite procesar URLs y obtener metadatos de diseño (logos, imágenes) para derivar la paleta de colores dominante.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1.  **Entrada**: El usuario introduce una URL o selecciona colores manualmente.
+2.  **Procesamiento**: La app consulta la API o calcula el ratio de contraste localmente (fórmula de luminancia relativa).
+3.  **Salida**: Se muestran los resultados de cumplimiento WCAG y una lista de pares de colores seguros.
+
+## 📋 Requisitos
+
+- **Node.js**: v18 o superior.
+- **NPM**: v9 o superior.
+
+## 💻 Instalación Local
+
+1.  Clona el repositorio:
+    ```bash
+    git clone https://github.com/tu-usuario/color-accessibility-checker.git
+    cd color-accessibility-checker
+    ```
+
+2.  Instala las dependencias:
+    ```bash
+    npm install
+    ```
+
+## 🚀 Desarrollo Local
+
+Para iniciar el servidor de desarrollo:
+
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+La aplicación estará disponible en `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ☁️ Despliegue
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Este proyecto es estático y se puede desplegar fácilmente en **Vercel**, **Netlify** o **GitHub Pages**.
+
+### Vercel
+1.  Instala Vercel CLI: `npm i -g vercel`
+2.  Ejecuta: `vercel`
+
+## 🤖 Integración con ChatGPT
+
+Para integrar esta herramienta en ChatGPT como una **GPT Action** o mediante **MCP**, puedes exponer la funcionalidad de análisis.
+
+### Schema para GPT Action (Ejemplo)
+
+```yaml
+openapi: 3.1.0
+info:
+  title: Color Analysis API
+  version: 1.0.0
+servers:
+  - url: https://api.microlink.io
+paths:
+  /:
+    get:
+      operationId: extractColors
+      summary: Extrae la paleta de colores de una URL
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: palette
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Paleta de colores extraída
 ```
+
+## 📂 Estructura del Proyecto
+
+```
+color-accessibility-checker/
+├── src/
+│   ├── components/
+│   │   └── ColorAccessibilityWidget.tsx  # Lógica principal del widget
+│   ├── App.tsx                           # Componente raíz
+│   ├── index.css                         # Estilos globales y variables CSS
+│   └── main.tsx                          # Punto de entrada
+├── public/                               # Activos estáticos
+├── index.html                            # Template HTML
+├── package.json                          # Dependencias y scripts
+├── tsconfig.json                         # Configuración TypeScript
+└── vite.config.ts                        # Configuración Vite
+```
+
+## 📜 Comandos Disponibles
+
+| Comando | Descripción |
+| :--- | :--- |
+| `npm run dev` | Inicia el servidor de desarrollo local. |
+| `npm run build` | Compila la aplicación para producción. |
+| `npm run preview` | Vista previa de la build de producción. |
+| `npm run lint` | Ejecuta el linter para encontrar errores. |
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
