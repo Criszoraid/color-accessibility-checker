@@ -1,30 +1,17 @@
-from fastapi import FastAPI, HTTPException, Query
-from fastapi.middleware.cors import CORSMiddleware
+from mcp.server.fastapi import FastMCP
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 import httpx
 import os
 
-app = FastAPI(title="Color Accessibility MCP Server")
+# Initialize FastMCP
+mcp = FastMCP("Color Accessibility")
 
-# Configure CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Serve static files from the React build (dist)
-# We assume 'npm run build' has been run and 'dist' exists in the root
-DIST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dist")
-
-@app.get("/api/analyze")
-async def analyze_url(url: str = Query(..., description="URL to analyze")):
+# Define the tool
+@mcp.tool()
+async def analyze_url(url: str) -> str:
     """
     Extracts color palette from a given URL using Microlink API.
-    This endpoint can be used by ChatGPT Actions.
+    Returns a JSON string with the color data.
     """
     if not url.startswith("http"):
         url = f"https://{url}"
@@ -37,7 +24,7 @@ async def analyze_url(url: str = Query(..., description="URL to analyze")):
             data = response.json()
             
             if data.get("status") == "success":
-                return {
+                return str({
                     "status": "success",
                     "data": {
                         "image_colors": data["data"].get("image", {}).get("palette", []),
@@ -45,20 +32,21 @@ async def analyze_url(url: str = Query(..., description="URL to analyze")):
                         "background": data["data"].get("image", {}).get("background_color"),
                         "foreground": data["data"].get("image", {}).get("color")
                     }
-                }
+                })
             else:
-                raise HTTPException(status_code=400, detail="Could not extract data from URL")
+                return "Error: Could not extract data from URL"
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            return f"Error: {str(e)}"
 
-# Serve React App
+# Serve Static Files
+DIST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dist")
+
 if os.path.exists(DIST_DIR):
-    app.mount("/", StaticFiles(directory=DIST_DIR, html=True), name="static")
+    # Mount static files to the FastMCP app
+    mcp.mount("/", StaticFiles(directory=DIST_DIR, html=True), name="static")
 else:
-    @app.get("/")
-    def read_root():
-        return {"message": "Frontend not built. Run 'npm run build' first."}
+    print("Warning: 'dist' directory not found. Frontend will not be served.")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(mcp, host="0.0.0.0", port=8000)
