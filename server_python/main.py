@@ -1,4 +1,4 @@
-from mcp.server.fastapi import FastMCP
+from fastmcp import FastMCP
 from fastapi.staticfiles import StaticFiles
 import httpx
 import os
