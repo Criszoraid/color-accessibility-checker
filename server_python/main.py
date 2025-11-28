@@ -43,7 +43,7 @@ DIST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dist")
 
 if os.path.exists(DIST_DIR):
     # Mount static files to the FastMCP app
-    mcp.mount("/", StaticFiles(directory=DIST_DIR, html=True), name="static")
+    mcp.mount("/", StaticFiles(directory=DIST_DIR, html=True))
 else:
     print("Warning: 'dist' directory not found. Frontend will not be served.")
 
