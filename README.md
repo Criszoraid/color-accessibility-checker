@@ -1,8 +1,8 @@
-# 🎨 Color Accessibility Checker - GPT App
+# 🎨 GPT Apps SDK - Color Accessibility Checker
 
-**Aplicación de verificación de accesibilidad de colores integrada con ChatGPT.**
+**Aplicación de verificación de accesibilidad de colores integrada con ChatGPT usando el OpenAI Apps SDK y el Model Context Protocol (MCP).**
 
-Este proyecto demuestra cómo crear una aplicación web interactiva que permite analizar el contraste de colores y extraer paletas de sitios web, diseñada para funcionar tanto como aplicación independiente como widget dentro de ChatGPT.
+Este proyecto demuestra cómo crear una aplicación completa que se integra directamente en ChatGPT, mostrando widgets interactivos de React que se actualizan dinámicamente cuando ChatGPT realiza acciones.
 
 ![Color App Preview](https://raw.githubusercontent.com/placeholder/preview.png)
 
@@ -10,10 +10,11 @@ Este proyecto demuestra cómo crear una aplicación web interactiva que permite 
 
 - [Características](#-características)
 - [¿Cómo Funciona?](#-cómo-funciona)
+- [Demo en Vivo](#-demo-en-vivo)
 - [Requisitos](#-requisitos)
 - [Instalación Local](#-instalación-local)
 - [Desarrollo Local](#-desarrollo-local)
-- [Despliegue](#-despliegue)
+- [Despliegue en Render](#-despliegue-en-render)
 - [Integración con ChatGPT](#-integración-con-chatgpt)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
 - [Comandos Disponibles](#-comandos-disponibles)
@@ -21,90 +22,87 @@ Este proyecto demuestra cómo crear una aplicación web interactiva que permite 
 
 ## ✨ Características
 
-- **✅ Verificación WCAG**: Comprobación automática de estándares AA y AAA para texto normal y grande.
-- **🔍 Extracción por URL**: Analiza cualquier sitio web (ej. `google.com`) para extraer sus colores de marca automáticamente.
-- **🎨 Análisis de Paleta**: Genera una paleta completa de colores desde la URL proporcionada.
-- **🤖 Combinaciones Inteligentes**: Calcula y muestra automáticamente todas las combinaciones de colores accesibles de la paleta extraída.
-- **🌗 Diseño Premium**: Interfaz moderna con modo oscuro, glassmorphism y animaciones fluidas.
-- **📱 Responsive**: Funciona perfectamente en escritorio y móvil.
+- ✅ **Widget Interactivo de React** con OpenAI Apps SDK UI
+- ✅ **Servidor MCP** (Simulado/Preparado) que expone herramientas a ChatGPT
+- ✅ **Actualización Dinámica** - El widget calcula contraste y combinaciones en tiempo real
+- ✅ **Diseño Moderno** con Glassmorphism y componentes accesibles
+- ✅ **Extracción de URL** - Analiza colores de sitios web externos
+- ✅ **JSON-RPC 2.0** - Protocolo MCP estándar
+- ✅ **Recursos HTML** - Widgets embebidos
 
-## 🛠 ¿Cómo Funciona?
+## 🎯 ¿Cómo Funciona?
 
-El widget utiliza React y Vite para el frontend. Para la extracción de colores, se integra con la API de **Microlink**, lo que permite procesar URLs y obtener metadatos de diseño (logos, imágenes) para derivar la paleta de colores dominante.
+```mermaid
+graph LR
+    A[ChatGPT] <-->|JSON-RPC 2.0| B[MCP Server]
+    B <-->|Data & HTML| C[React Widget]
+    C -->|Render| A
+```
 
-1.  **Entrada**: El usuario introduce una URL o selecciona colores manualmente.
-2.  **Procesamiento**: La app consulta la API o calcula el ratio de contraste localmente (fórmula de luminancia relativa).
-3.  **Salida**: Se muestran los resultados de cumplimiento WCAG y una lista de pares de colores seguros.
+1. **Usuario pregunta a ChatGPT**: "Analiza los colores de google.com"
+2. **ChatGPT llama al servidor MCP** (o usa la lógica interna del widget).
+3. **Servidor responde** con datos estructurados + HTML del widget.
+4. **ChatGPT renderiza** el widget React directamente en la conversación.
+5. **Usuario interactúa** con el widget (cambiar colores, ver combinaciones).
+6. **Widget se actualiza** dinámicamente.
+
+## 🌐 Demo en Vivo
+
+**Servidor en Producción:**
+🔗 [https://color-accessibility-checker.onrender.com](https://color-accessibility-checker.onrender.com)
+
+**Endpoint MCP:**
+🔗 [https://color-accessibility-checker.onrender.com/mcp](https://color-accessibility-checker.onrender.com/mcp)
 
 ## 📋 Requisitos
 
-- **Node.js**: v18 o superior.
-- **NPM**: v9 o superior.
+- **Node.js 18+** ([Descargar](https://nodejs.org/))
+- **npm** (incluido con Node.js)
+- **Git** (opcional, para clonar el repositorio)
 
 ## 💻 Instalación Local
 
-1.  Clona el repositorio:
-    ```bash
-    git clone https://github.com/tu-usuario/color-accessibility-checker.git
-    cd color-accessibility-checker
-    ```
+### 1️⃣ Clonar el Repositorio
 
-2.  Instala las dependencias:
-    ```bash
-    npm install
-    ```
+```bash
+git clone https://github.com/tu-usuario/color-accessibility-checker.git
+cd color-accessibility-checker
+```
 
-## 🚀 Desarrollo Local
+### 2️⃣ Instalar Dependencias de Node.js
 
-Para iniciar el servidor de desarrollo:
+```bash
+npm install
+```
+
+## � Desarrollo Local
+
+### Opción A: Script Automático (Recomendado)
+
+**macOS/Linux:**
 
 ```bash
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:5173`.
+Esto inicia automáticamente:
+- ✅ Servidor de desarrollo Vite (puerto 5173)
 
-## ☁️ Despliegue
+## ☁️ Despliegue en Render
 
-Este proyecto es estático y se puede desplegar fácilmente en **Vercel**, **Netlify** o **GitHub Pages**.
-
-### Vercel
-1.  Instala Vercel CLI: `npm i -g vercel`
-2.  Ejecuta: `vercel`
+1. Haz un fork de este repositorio.
+2. Crea un nuevo **Static Site** en Render.
+3. Conecta tu repositorio.
+4. Configura el comando de build: `npm run build`.
+5. Configura el directorio de publicación: `dist`.
 
 ## 🤖 Integración con ChatGPT
 
-Para integrar esta herramienta en ChatGPT como una **GPT Action** o mediante **MCP**, puedes exponer la funcionalidad de análisis.
+Para probar el widget en ChatGPT:
 
-### Schema para GPT Action (Ejemplo)
-
-```yaml
-openapi: 3.1.0
-info:
-  title: Color Analysis API
-  version: 1.0.0
-servers:
-  - url: https://api.microlink.io
-paths:
-  /:
-    get:
-      operationId: extractColors
-      summary: Extrae la paleta de colores de una URL
-      parameters:
-        - name: url
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: palette
-          in: query
-          schema:
-            type: boolean
-            default: true
-      responses:
-        '200':
-          description: Paleta de colores extraída
-```
+1. Ve a **GPT Builder**.
+2. Crea un nuevo GPT.
+3. En **Actions**, importa el esquema OpenAPI (si usas un backend) o configura las instrucciones para usar el widget renderizado.
 
 ## 📂 Estructura del Proyecto
 
@@ -112,15 +110,14 @@ paths:
 color-accessibility-checker/
 ├── src/
 │   ├── components/
-│   │   └── ColorAccessibilityWidget.tsx  # Lógica principal del widget
-│   ├── App.tsx                           # Componente raíz
-│   ├── index.css                         # Estilos globales y variables CSS
-│   └── main.tsx                          # Punto de entrada
-├── public/                               # Activos estáticos
-├── index.html                            # Template HTML
-├── package.json                          # Dependencias y scripts
-├── tsconfig.json                         # Configuración TypeScript
-└── vite.config.ts                        # Configuración Vite
+│   │   └── ColorAccessibilityWidget.tsx  # 🧩 Lógica del widget
+│   ├── App.tsx                           # 📱 Componente principal
+│   ├── index.css                         # 🎨 Estilos globales
+│   └── main.tsx                          # 🚀 Punto de entrada
+├── public/                               # 🖼 Assets estáticos
+├── index.html                            # 📄 Template HTML
+├── package.json                          # 📦 Dependencias
+└── vite.config.ts                        # ⚙️ Configuración Vite
 ```
 
 ## 📜 Comandos Disponibles
@@ -130,7 +127,6 @@ color-accessibility-checker/
 | `npm run dev` | Inicia el servidor de desarrollo local. |
 | `npm run build` | Compila la aplicación para producción. |
 | `npm run preview` | Vista previa de la build de producción. |
-| `npm run lint` | Ejecuta el linter para encontrar errores. |
 
 ## 📄 Licencia
 
